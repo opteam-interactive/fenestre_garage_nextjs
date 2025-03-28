@@ -1,12 +1,17 @@
 import FormWrapper from '@/components/FormWrapper'
 import RdvForm from '@/components/forms/RdvForm'
-import { Motif } from '@/types/types'
-
+import { getHolidays } from '@/libs/date';
+import { getUser } from "@/libs/auth"
+import { redirect } from "next/navigation"
 export default async function page() {
- 
+
+  const user = await getUser()
+  if (!user ) {
+    return redirect('/')
+} 
   const motifsData = await fetch(process.env.SITE_URL + '/api/motifs').then(res => res.json())
   const motifs = motifsData.motifs
-  
+  const holidays = getHolidays(new Date().getFullYear())
   return (
     <div>
     <section className="flex flex-col items-center gap-4 p-12">
@@ -19,7 +24,7 @@ export default async function page() {
         </div>
 
         <FormWrapper title='Votre rendez-vous' className='md:w-2/3 lg:w-1/2 my-8'>
-            <RdvForm motifs={motifs} />
+            <RdvForm motifs={motifs} holidays={holidays}/>
         </FormWrapper>
 
 

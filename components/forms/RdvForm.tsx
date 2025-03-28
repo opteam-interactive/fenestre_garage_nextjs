@@ -10,7 +10,7 @@ import { fr } from "react-day-picker/locale";
 import { Motif } from "@/types/types"
 import { format } from "date-fns"
 
-export default function RdvForm({ motifs }: { motifs: Motif[] }) {
+export default function RdvForm({ motifs, holidays }: { motifs: Motif[], holidays: Date[] }) {
 
 
 
@@ -46,10 +46,8 @@ export default function RdvForm({ motifs }: { motifs: Motif[] }) {
     useEffect(() => {
         async function fetchRdvForDate() {
             const formattedDate = format(appointmentDate, 'yyyy-MM-dd');
-            console.log("FORMATTED DATE", formattedDate)
             const response = await fetch("/api/rdv/filter/" + formattedDate);
             const data: string[] = await response.json();
-            console.log('DATA', data)
             setAvailableSlots(data);
         }
         fetchRdvForDate();
@@ -189,20 +187,30 @@ export default function RdvForm({ motifs }: { motifs: Motif[] }) {
                             <input type="checkbox" />
                             <div className="collapse-title btn ">Afficher le calendrier</div>
                             <div className="collapse-content flex justify-center">
-                                    <Controller
-                                        control={control}
-                                        name='appointmentDate'
-                                        render={({ field }) => (
-                                            <DayPicker
-                                                locale={fr}
-                                                animate
-                                                mode="single"
-                                                onSelect={(date) => field.onChange(date)}
-                                                selected={field.value}
-                                                disabled={{ dayOfWeek: [0, 6] }}
-                                            />
-                                        )}
-                                    />
+                                <Controller
+                                    control={control}
+                                    name='appointmentDate'
+                                    render={({ field }) => (
+                                        <DayPicker
+                                            locale={fr}
+                                            animate
+                                            mode="single"
+                                            onSelect={(date) => field.onChange(date)}
+                                            selected={field.value}
+                                            disabled={date => {
+                                                const day = date.getDay();
+                                                const isWeekend = day === 0 || day === 6; // 0: Sunday, 6: Saturday
+                                                const isHoliday = holidays.some(holiday => {
+                                                    return (
+                                                        date.getMonth() === holiday.getMonth() &&
+                                                        date.getDate() === holiday.getDate()
+                                                    );
+                                                });
+                                                return isWeekend || isHoliday;
+                                            }}
+                                        />
+                                    )}
+                                />
                             </div>
                         </div>
                         <p className="text-error my-1">{errors.appointmentDate?.message}</p>

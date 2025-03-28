@@ -2,8 +2,10 @@
 import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { loginSchema } from "@/types/zod"
+import { useRouter } from 'next/navigation'
 
 export default function Loginform() {
+    const router = useRouter()
     const {
         register,
         handleSubmit,
@@ -13,8 +15,19 @@ export default function Loginform() {
         resolver: zodResolver(loginSchema),
     })
 
-    const onSubmit = (data) => {
-        console.log(data)
+    const onSubmit =  async (data) => {
+        const response = await fetch("/api/auth/login", {
+            method: "POST",
+            body: JSON.stringify(data),
+        }) 
+        if (response.ok) {
+            const user = await response.json()
+            if (user) {
+                router.push("/espace-client")
+            }
+        }
+
+
     }
 
     return (
@@ -22,7 +35,7 @@ export default function Loginform() {
             <fieldset className="fieldset gap-4  p-4">
                 <div>
                     <label className="fieldset-label">Nom d'utilisateur</label>
-                    <input type="email" className="input w-full rounded-full" placeholder="Votre identifiant" {...register("userName")} />
+                    <input type="text" className="input w-full rounded-full" placeholder="Votre identifiant" {...register("userName")} />
                     <p className="text-error my-1">{errors.userName?.message}</p>
                 </div>
 
