@@ -43,7 +43,7 @@ export const rdvSchema = z.object({
   brand: z.string().min(2).max(20),
   model: z.string().min(2).max(20),
   plateNumber: z.string().min(2).max(20),
-  task: z.string().min(1).max(50),
+  task: z.string().max(50),
   //see about type for date and time
   appointmentDate: z.date(),
   appointmentTime: z.string(),
