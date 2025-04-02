@@ -1,4 +1,4 @@
-import { encodeBase64, fetchToApi } from "@/libs/utils";
+import { encodeBase64, fetchToApi } from "@/utils/utils";
 import { loginSchema } from "@/types/zod";
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'

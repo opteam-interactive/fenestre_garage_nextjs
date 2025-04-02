@@ -1,6 +1,6 @@
 import { WebdevRendezVous } from "@/types/types";
-import { fetchToApi, encodeBase64 } from "@/libs/utils"; // Your existing fetch function
-import { generateTimeSlots, getCalendarEndBound } from "@/libs/date"
+import { fetchToApi, encodeBase64 } from "@/utils/utils"; // Your existing fetch function
+import { generateTimeSlots, getCalendarEndBound } from "@/utils/date"
 
 interface Erreur {
     erreur: string;

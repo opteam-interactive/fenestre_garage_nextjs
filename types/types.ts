@@ -1,5 +1,6 @@
-import { z, rdvSchema, userSchema } from "@/types/zod"
+import { z, rdvSchema, userSchema, rdvWebdevSchema } from "@/types/zod"
  
+export type ErrorMessage = { success: boolean; message: string };
 
 export type Motif = {
     IDMotifRDV: number,
@@ -13,40 +14,8 @@ export type Motif = {
     NbRDVParJour: number
 }
 export type RendezVous = z.infer<typeof rdvSchema>
+export type RdvWebdev = z.infer<typeof rdvWebdevSchema>
 
-export type WebdevRendezVous = {
-    IDRendezVous: number,
-    NomSite : 'PEUGEOT',
-    DateRécept : string,
-    DateRestit : string,
-    Client: string,
-    Téléphone: string,
-    Mobile: string,
-    ClientEmail: string,
-    ClientAdresse: string,
-    ClientCP: string,
-    ClientVille: string,
-    Marque: string,
-    Modèle: string,
-    Immatriculation: string,
-    Travaux: string,
-    NomActivité: string,
-    NbHeureTx: string,
-    Observations: string,
-    IDVoiturePret: 0,
-    ClientAssurance: string,
-    Cdé: false,
-    DépotSansContact: false,
-    CréateurDateh: Date,
-    CréateurID: number,
-    ModifieurDateh: string,
-    ModifieurID: 0,
-    IDMotifRDV: number,
-    IDUtilisateur: number,
-    IDVéhicule: number,
-    SaisieDuClient: string,
-    Etat: 1
-}
 
 export type User = z.infer<typeof userSchema>
 

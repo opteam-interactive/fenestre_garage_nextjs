@@ -1,7 +1,7 @@
 import FormWrapper from '@/components/FormWrapper'
 import RdvForm from '@/components/forms/RdvForm'
-import { getHolidays } from '@/libs/date';
-import { getUser } from "@/libs/auth"
+import { getHolidays } from '@/utils/date';
+import { getUser } from "@/utils/auth"
 import { redirect } from "next/navigation"
 export default async function page() {
 

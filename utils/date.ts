@@ -1,6 +1,6 @@
 import type { RendezVous, WebdevRendezVous } from "../types/types";
 import { format } from 'date-fns'
-
+import { fr } from 'date-fns/locale/fr';
 export function generateTimeSlots(startHour: number, endHour: number, intervalMinutes: number) {
     const slots: string[] = [];
 
@@ -99,4 +99,18 @@ export function getCalendarEndBound() {
     const date = new Date();
     date.setDate(date.getDate() + 8)
     return date
+}
+
+export const convertUtfToLocale = (date: Date, time: string) => {
+    // Convert UTC to local date (France)
+    const utcDate = new Date(date);
+
+    // Set the time from form input
+    const [hours, minutes] = time.split(":").map(Number);
+    utcDate.setHours(hours, minutes); // This modifies in local time
+
+    // Format properly for France (Local Time)
+    const formattedDate = format(utcDate, "yyyy-MM-dd'T'HH:mm:ss.SSS", { locale: fr });
+
+    return formattedDate
 }

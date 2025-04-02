@@ -1,6 +1,14 @@
-import React from 'react'
+'use client'
+import { redirect } from 'next/navigation'
 
 export default function Nav() {
+ 
+  const logout = async () => {
+    const reponse = await fetch('/api/auth/logout')
+    if (reponse.ok) {
+      redirect('/')
+    }}
+   
   return (
     <div className="navbar px-4">
     <div className="navbar-start">
@@ -26,7 +34,7 @@ export default function Nav() {
       </ul>
     </div>
     <div className="navbar-end">
-      <a className="btn">Déconnexion</a>
+      <a className="btn" onClick={logout}>Déconnexion</a>
     </div>
   </div>
   )

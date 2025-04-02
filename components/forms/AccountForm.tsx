@@ -3,8 +3,10 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { userSchema } from "@/types/zod"
 import { DevTool } from '@hookform/devtools';
+import type { WebdevUser } from "@/types/types";
 
-export default function AccountForm() {
+export default function AccountForm({currentUser} : {currentUser?: WebdevUser}) {
+    
     const {
         register,
         handleSubmit,
@@ -13,6 +15,18 @@ export default function AccountForm() {
         formState: { errors }
     } = useForm({
         resolver: zodResolver(userSchema),
+        defaultValues: {
+            email: currentUser?.Email,
+            category: currentUser?.Société === '' ? 'particulier' : 'societe',
+            lastName: currentUser?.Nom,
+            firstName: currentUser?.Prénom,
+            telephone: currentUser?.Téléphone,
+            societe: currentUser?.Société,
+            address: currentUser?.Adresse,
+            city: currentUser?.Ville,
+            zipcode: currentUser?.cp
+
+        }
     })
 
     //Check if entreprise is selected

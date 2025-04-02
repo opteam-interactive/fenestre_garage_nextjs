@@ -1,4 +1,4 @@
-import { encodeBase64, fetchToApi } from "@/libs/utils"
+import { encodeBase64, fetchToApi } from "@/utils/utils"
 
 
 export async function GET() {

@@ -15,15 +15,18 @@ export async function getUser() {
 
     const cookieStore = await cookies()
     const token = cookieStore.get('auth_token')
-    if (!token) return null;
+    if (!token){
+        return { authenticated: false, user: null };
+    } 
     try {
         const tokenValue = token.value;
         const { payload } = await jwtVerify(tokenValue, secretKey);
-        return payload as WebdevUser; // Cast payload to your user type
+        return { authenticated: true, user: payload as WebdevUser}; // Cast payload to your user type
     } catch (error) {
         console.error("JWT verification failed:", error);
-        return null;
-    }
+        return { authenticated: false, user: null };
+    } 
+    
 }
 
 export async function getUserData(token: string): Promise<WebdevUser | null> {
