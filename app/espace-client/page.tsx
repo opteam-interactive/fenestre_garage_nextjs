@@ -8,9 +8,10 @@ export default async function page() {
   return (
     <div>
 
-      <section className="flex flex-col items-center gap-4 p-12">
+      <section className="flex flex-col items-center gap-4 p-4">
         <div className="text-center">
           <h1 className="mb-2 uppercase font-terminaBold text-customblue">Votre Espace</h1>
+          <h2>Bonjour  {user?.Prénom} {user?.Nom}</h2>
           <h2 className="font-semibold text-customyellow">Attention, si vous avez plusieurs travaux à effectuer, <br />
             merci de nous contacter au 02 35 46 03 70.</h2>
         </div>

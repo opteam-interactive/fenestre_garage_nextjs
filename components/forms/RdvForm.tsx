@@ -8,7 +8,7 @@ import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 import { fr } from "react-day-picker/locale";
 import { format } from "date-fns"
-
+import ErrorComponent from "@/components/ErrorComponent"
 import { Motif, ErrorMessage, RendezVous } from "@/types/types"
 import { NextResponse } from "next/server"
 
@@ -61,7 +61,7 @@ export default function RdvForm({ motifs, holidays }: { motifs: Motif[], holiday
         fetchRdvForDate();
     }, [appointmentDate])
 
-    const onSubmit = async (formData: RendezVous ) => {
+    const onSubmit = async (formData: RendezVous) => {
         try {
             const response = await fetch("/api/rdv/save", {
                 method: "POST",
@@ -78,28 +78,21 @@ export default function RdvForm({ motifs, holidays }: { motifs: Motif[], holiday
 
             if (!response.ok) {
                 throw new Error(data.message || `Error: ${response.status}`);
-
             }
+
             setErrorMessage({ success: true, message: "Rendez vous enregistré avec succès" });
             reset()
         } catch (error) {
             if (error instanceof Error) {
                 setErrorMessage({ success: false, message: error.message });
             }
-
             console.error("Error submitting form:", error);
         }
     };
 
     return (
         <div className="w-full">
-            {errorMessage && (
-              <div className="text-center">
-                    <span className={errorMessage.success ? "text-green-600" : "text-red-600"}>
-                        {errorMessage.message}
-                    </span>
-              </div>
-            )}
+            <ErrorComponent errorMessage={errorMessage} />
             <form onSubmit={handleSubmit(onSubmit)} >
                 <DevTool control={control} placement="top-left" />
 

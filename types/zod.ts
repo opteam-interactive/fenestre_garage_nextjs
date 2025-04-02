@@ -22,7 +22,7 @@ export const loginSchema = z.object({
 })
 
 export const userSchema = z.object({
-  id: z.number().nullable(),
+  // id: z.number().nullable(),
   email: z.string().email().min(2).max(50),
   password: z.string().min(6).max(50),
   passwordConfirm: z.string().min(6).max(50),

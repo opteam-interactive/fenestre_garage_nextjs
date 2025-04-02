@@ -1,20 +1,19 @@
-import { type NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 
-export async function POST(request: NextRequest) {
-    //Get info from request
-    const { email, name, message } = await request.json();
+
+export async function sendEmail(email: string, name:string, html: string) {
+   
 
     // create transporter
     const transporter = nodemailer.createTransport({
-        host: 'smtp.ethereal.email',
-        port: 587,
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
         auth: {
-            user: 'theo.harber@ethereal.email',
-            pass: 'mqj4PTQxh68sGaQwb1'
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
         }
-    });
+    } as nodemailer.TransportOptions);
 
     //set up mail options
     const mailOptions: Mail.Options = {
@@ -22,15 +21,15 @@ export async function POST(request: NextRequest) {
         to: 'theo.harber@ethereal.email',
         // cc: email, (uncomment this line if you want to send a copy to the sender)
         subject: `Message from ${name} (${email})`,
-        text: message,
+        html: html,
     };
 
     try {
         const info = await transporter.sendMail(mailOptions);
         console.log('Message sent: %s', info.messageId);
-        return NextResponse.json({ message: 'Email sent' });
+        return { success: true, info };
     } catch (error) {
         console.error('Error sending email:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return { success: false, error };
     }
 }

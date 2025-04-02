@@ -16,7 +16,7 @@ export default function page() {
         <h3 className="font-semibold">Connexion à votre espace</h3>
          <LoginForm /> 
       </div>
-      <button className="btn btn-success rounded-full">Créer un compte  </button>
+      <a href="/register" className="btn btn-success rounded-full">Créer un compte  </a>
 
     </section>
   )

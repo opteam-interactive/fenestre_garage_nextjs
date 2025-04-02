@@ -3,16 +3,18 @@ import { getUser } from "@/utils/auth"
 import { convertUtfToLocale } from "@/utils/date"
 import { redirect } from "next/navigation"
 import { fetchToApi, encodeBase64 } from "@/utils/utils"
-import {format} from 'date-fns'
+import { format } from 'date-fns'
+import { sendRdvEmail } from "@/utils/emailTemplates"
 
 import { rdvWebdevSchema } from "@/types/zod"
 import type { WebdevUser, RdvWebdev, Motif } from "@/types/types"
+import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
-    
+
     const { formData, motifs, selectedMotifID } = await request.json()
-  
-   
+
+
     // Validate
     const parseResult = rdvSchema.safeParse(formData)
     if (!parseResult.success) {
@@ -31,14 +33,14 @@ export async function POST(request: Request) {
     try {
 
         //Find motif from its ID
-        const selectedMotif = motifs.find((motif : Motif) => motif.IDMotifRDV === parseInt(formData.task))
+        const selectedMotif = motifs.find((motif: Motif) => motif.IDMotifRDV === parseInt(formData.task))
 
         // Get DateRecept in UTC time
         const formattedDateRecept = convertUtfToLocale(formData.appointmentDate, formData.appointmentTime)
 
         // Set DateRestit to 18:00:00.000
         const formattedDateRestit = convertUtfToLocale(formData.appointmentDate, "18:00")
-    
+
 
         // Format Travaux description
         const formattedTravaux = `MOTIF: ${selectedMotif?.Motif} - PRET VEHICULE = ${formData.rental ? "OUI" : "NON"
@@ -46,10 +48,10 @@ export async function POST(request: Request) {
             } - TYPE DE TRANSMISSION SOUHAITEE = ${formData.rentalDrive ?? "SANS OBJET"
             } - SANS CONTACT = ${formData.contactless === "true" ? "OUI" : "NON"}`;
 
-            
 
-    
-//         // Build RDV Object
+
+
+        //         // Build RDV Object
         const rdv: RdvWebdev = {
             NomSite: "PEUGEOT",
             DateRécept: formattedDateRecept,
@@ -134,31 +136,26 @@ ${rdv.Blacklistage === "" ? "NULL" : `'${rdv.Blacklistage}'`}
         const encodedSQL = encodeBase64(SQL);
 
         const apiResponse = await fetchToApi(encodedSQL);
-        console.log(apiResponse)
         if (!apiResponse.success) {
             // Gestion des erreurs de l'API externe
-            return Response.json(
-                { error: apiResponse.error },
-                { status: apiResponse.status || 500 } // Utilisez le code d'état de l'API ou 500 par défaut
-            );
+            return NextResponse.json({ error: apiResponse.error }, { status: apiResponse.status || 500 });
         }
 
-        //SEND_CONFIRMATION_EMAIL
-        // const response = sendRdvEmail(webdevUser, form.data, selectedMotif!);
 
-        // if (!response.success) {
-        //     return Response.json(
-        //         { error: response.error },
-        //         { status: response.status || 500 }
-        //     )
-        // }
+
+        // SEND_CONFIRMATION_EMAIL
+        const response = sendRdvEmail(webdevUser, formData, selectedMotif!);
+
+        if (!response.success) {
+            return NextResponse.json({ error: "Error sending email" }, { status: 500 });
+        }
 
         // redirect ('/espace-client/prendre-rdv');
-        return Response.json({ success: true }, { status: 200 });
+        return NextResponse.json({ success: true, message: "Rendez-vous enregistré avec succès" });
     }
     catch (error) {
         console.error("Erreur :", error);
-        return Response.json({ error: "Une erreur s'est produite" }, { status: 500 });
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 
     }
 }

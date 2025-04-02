@@ -5,7 +5,7 @@ import { userSchema } from "@/types/zod"
 import { DevTool } from '@hookform/devtools';
 import type { WebdevUser } from "@/types/types";
 
-export default function AccountForm({currentUser} : {currentUser?: WebdevUser}) {
+export default function AccountForm({currentUser} : {currentUser?: WebdevUser | null}) {
     
     const {
         register,
