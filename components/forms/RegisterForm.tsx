@@ -13,7 +13,6 @@ import type { ErrorMessage, User } from "@/types/types";
 
 export default function AccountForm() {
     const [errorMessage, setErrorMessage] = useState<ErrorMessage | null>(null);
-
     const {
         register,
         handleSubmit,

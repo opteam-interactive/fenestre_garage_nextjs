@@ -1,4 +1,4 @@
-import { sendEmail } from "@/utils/sendEmails";
+import { sendEmail } from "@/services/emails/emailHelper";
 import type { RendezVous, WebdevUser, Motif } from "@/types/types";
 
 export function sendRdvEmail(user: WebdevUser, rdv: RendezVous, motif: Motif) {

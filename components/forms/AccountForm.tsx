@@ -1,17 +1,21 @@
 "use client"
+import { useState } from "react"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { userSchema } from "@/types/zod"
 import { DevTool } from '@hookform/devtools';
-import type { WebdevUser } from "@/types/types";
+import type { WebdevUser, User, ErrorMessage } from "@/types/types";
+import ErrorComponent from "../ErrorComponent"
 
 export default function AccountForm({currentUser} : {currentUser?: WebdevUser | null}) {
-    
+    const [errorMessage, setErrorMessage] = useState<ErrorMessage | null>(null);
+    const onInvalid = (errors) => console.error(errors)
     const {
         register,
         handleSubmit,
         watch,
         control,
+        reset,
         formState: { errors }
     } = useForm({
         resolver: zodResolver(userSchema),
@@ -32,12 +36,40 @@ export default function AccountForm({currentUser} : {currentUser?: WebdevUser | 
     //Check if entreprise is selected
     const selectedCategory = watch('category')
 
-    const onSubmit = (data) => {
-        console.log(data)
-    }
+     const onSubmit = async (formData: User) => {
+        
+            try {
+                const response = await fetch("/api/auth/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        formData : formData
+                    }),
+                })
+                if (!response.ok) {
+                    throw new Error(response.statusText)
+                }
+                const json = await response.json()
+                console.log(json)
+                setErrorMessage({ success: true, message: "Utilisateur enregistré avec succès" })
+                reset()
+                window.location.href = "/";
+                
+            } catch (error) {
+                if (error instanceof Error) {
+                    setErrorMessage({ success: false, message: error.message });
+                }
+                console.error("Error submitting form:", error);
+            }
+    
+        }
+    
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+        <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="w-full">
+            <ErrorComponent errorMessage={errorMessage} />
             <DevTool control={control} placement="top-left" />
 
             <fieldset className="fieldset gap-4  p-4">
@@ -72,6 +104,23 @@ export default function AccountForm({currentUser} : {currentUser?: WebdevUser | 
                     }
 
                 </div>
+
+                {/* MDP */}
+                {/* <div className="grid grid-cols-2 gap-4">
+                   
+                    <div>
+                        <label className="fieldset-label">Mot de passe</label>
+                        <input type="text" className="input w-full rounded-full" placeholder="Votre identifiant" {...register("password")} />
+                        <p className="text-error my-1">{errors.password?.message}</p>
+                    </div>
+
+                   
+                    <div>
+                        <label className="fieldset-label">Confirmer le mot de passe</label>
+                        <input type="text" className="input w-full rounded-full" placeholder="Votre identifiant" {...register("passwordConfirm")} />
+                        <p className="text-error my-1">{errors.passwordConfirm?.message}</p>
+                    </div>
+                </div> */}
 
                 <div className="grid grid-cols-2 gap-4">
                     {/* NOM */}

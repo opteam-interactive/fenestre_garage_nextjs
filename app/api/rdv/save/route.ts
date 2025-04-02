@@ -4,7 +4,7 @@ import { convertUtfToLocale } from "@/utils/date"
 import { redirect } from "next/navigation"
 import { fetchToApi, encodeBase64 } from "@/utils/utils"
 import { format } from 'date-fns'
-import { sendRdvEmail } from "@/utils/emailTemplates"
+import { sendRdvEmail } from "@/services/emails/saveRdvEmail"
 
 import { rdvWebdevSchema } from "@/types/zod"
 import type { WebdevUser, RdvWebdev, Motif } from "@/types/types"
